@@ -87,7 +87,7 @@ class PlaceAutocompleteAdapter
     /**
      * Returns an item from the last autocomplete query.
      */
-    override fun getItem(position: Int): AutocompletePrediction? {
+    override fun getItem(position: Int): AutocompletePrediction {
         return mResultList!![position]
     }
 
@@ -102,8 +102,8 @@ class PlaceAutocompleteAdapter
 
         val textView1 = row.findViewById<View>(android.R.id.text1) as TextView
         val textView2 = row.findViewById<View>(android.R.id.text2) as TextView
-        textView1.setText(item!!.getPrimaryText(STYLE_BOLD))
-        textView2.setText(item!!.getSecondaryText(STYLE_BOLD))
+        textView1.text = item.getPrimaryText(STYLE_BOLD)
+        textView2.text = item.getSecondaryText(STYLE_BOLD)
 
         return row
     }
