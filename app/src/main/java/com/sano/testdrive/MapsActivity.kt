@@ -1,5 +1,6 @@
 package com.sano.testdrive
 
+import android.location.Location
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import com.directions.route.*
+import com.example.latlnginterpolation.MarkerAnimation
 import com.google.android.gms.location.places.AutocompletePrediction
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
@@ -29,6 +31,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
     private var markerFourth: Marker? = null
     private var markerEnd: Marker? = null
     private var polylines: ArrayList<Polyline> = arrayListOf()
+    private var routePoints: List<LatLng>? = null
+    private var routeDistances: ArrayList<FloatArray>? = null
+    private var markerCar: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
 
         map.onCreate(savedInstanceState)
         map.getMapAsync(this)
+
+        btn_start.setOnClickListener {
+            if(routePoints != null) {
+                markerCar?.remove()
+                markerCar = mMap.addMarker(
+                        MarkerOptions()
+                                .position(routePoints!![0])
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.washer_car))
+                                .anchor(0.5f, 0.5f))
+
+                MarkerAnimation.animateMarker(markerCar!!, routePoints!!)
+            } else {
+                toast("Route is empty")
+            }
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -59,7 +79,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
         setMarkerToPosition(mMap.addMarker(
                 MarkerOptions()
                         .position(latLng)
-                        .title("Marker in Sydney")
                         .icon(BitmapDescriptorFactory
                                 .defaultMarker(getColorByPosition(position)))
         ), position)
@@ -72,12 +91,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
     private var routing: AsyncTask<Void, Void, ArrayList<Route>>? = null
 
     private fun onPointAdded() {
-        val markers = listOf(markerStart, markerSecond, markerThird, markerFourth, markerEnd)
-        val waypoints = arrayListOf<LatLng>()
-
-        markers.forEach { marker ->
-            marker?.let {  waypoints.add(it.position) }
-        }
+        val waypoints = getWaypoints()
 
         if (waypoints.size < 2) {
             return
@@ -90,6 +104,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
                 .waypoints(waypoints)
                 .build()
                 .execute()
+    }
+
+    private fun getWaypoints(): List<LatLng> {
+        val markers = listOf(markerStart, markerSecond, markerThird, markerFourth, markerEnd)
+        val waypoints = arrayListOf<LatLng>()
+
+        for(marker in markers) {
+            marker?.let {  waypoints.add(it.position) }
+        }
+
+        return waypoints
     }
 
     override fun onRoutingFailure(p0: RouteException?) {
@@ -106,19 +131,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, RoutingListener {
 
         route ?: return
 
-        //add route(s) to the map.
+        val routePoints = route[0].points
+        this.routePoints = route[0].points
+        routeDistances = arrayListOf()
+        routePoints.forEachIndexed { index, latLng ->
+            if(index == routePoints.lastIndex) return@forEachIndexed
+
+            val array = FloatArray(2)
+
+            Location.distanceBetween(
+                    routePoints[index].latitude,
+                    routePoints[index].longitude,
+                    routePoints[index + 1].latitude,
+                    routePoints[index + 1].longitude,
+                    array)
+
+            routeDistances!!.add(array)
+        }
+
         for (i in route.indices) {
-            //In case of more than 5 alternative routes
             val colorIndex = i % COLORS.size;
 
             val polyOptions = PolylineOptions()
             polyOptions.color(ContextCompat.getColor(this, COLORS[colorIndex]))
             polyOptions.width(10 + i * 3.0f)
-            polyOptions.addAll(route[i].points);
-            val polyline = mMap.addPolyline(polyOptions);
+            polyOptions.addAll(route[i].points)
+            val polyline = mMap.addPolyline(polyOptions)
             polylines.add(polyline)
 
-            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show()
         }
     }
 
