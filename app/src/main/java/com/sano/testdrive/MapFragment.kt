@@ -47,8 +47,8 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     private val markerAnimation: MarkerAnimation = MarkerAnimation()
 
     private val markerPoints: ArrayList<Marker> = arrayListOf()
-    private var polylines: ArrayList<Polyline> = arrayListOf()
-    private var routePoints: ArrayList<LatLng> = arrayListOf()
+    private val polylines: ArrayList<Polyline> = arrayListOf()
+    private val routePoints: ArrayList<LatLng> = arrayListOf()
 
     private var markerCar: Marker? = null
     private var routingTask: AsyncTask<Void, Void, ArrayList<Route>>? = null
@@ -65,13 +65,15 @@ class MapFragment : BaseMapFragment(), RoutingListener {
                 toast("Route is empty")
             } else {
                 markerCar?.remove()
-                markerCar = map.addMarker(
+                map.addMarker(
                         MarkerOptions()
-                                .position(routePoints!![0])
+                                .position(routePoints[0])
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.washer_car))
                                 .anchor(0.5f, 0.5f))
-
-                markerAnimation.animateMarker(markerCar!!, routePoints!!)
+                        .let {
+                            markerCar = it
+                            markerAnimation.animateMarker(it, routePoints)
+                        }
             }
         }
     }
@@ -94,6 +96,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
                 val result = it.result
                 val list = DataBufferUtils.freezeAndClose(result)
                 markerPoints.forEach { it.remove() }
+                polylines.forEach { it.remove() }
                 markerPoints.clear()
                 list.forEachIndexed { index, place ->
                     markerPoints.add(addPoint(place.latLng, index))
@@ -124,11 +127,6 @@ class MapFragment : BaseMapFragment(), RoutingListener {
 
     override fun onRoutingSuccess(route: ArrayList<Route>?, p1: Int) {
         toast("Routing success, routes: ${route?.size}")
-        if (polylines.isNotEmpty()) {
-            for (poly in polylines) {
-                poly.remove()
-            }
-        }
 
         routePoints.clear()
 
@@ -148,6 +146,13 @@ class MapFragment : BaseMapFragment(), RoutingListener {
         toast("Route: distance - " + route[0].distanceValue + ": duration - " + route[0].durationValue)
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        stopAnimation()
+        routingTask?.cancel(true)
+    }
+
     private fun addPoint(latLng: LatLng, position: Int): Marker {
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
 
@@ -159,6 +164,8 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     }
 
     private fun updateRouting() {
+        stopAnimation()
+
         if (getWaypoints().size < 2) {
             return
         }
@@ -173,4 +180,9 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     }
 
     private fun getWaypoints(): List<LatLng> = markerPoints.map { it.position }
+
+    private fun stopAnimation() {
+        markerAnimation.stopAnimation()
+        markerCar?.apply { remove() }
+    }
 }

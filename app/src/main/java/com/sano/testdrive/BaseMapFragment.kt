@@ -27,7 +27,7 @@ abstract class BaseMapFragment: Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        map_view.onDestroy()
+        map_view?.onDestroy()
     }
 
     override fun onLowMemory() {

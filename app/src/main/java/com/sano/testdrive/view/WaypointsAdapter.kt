@@ -40,7 +40,7 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
     override fun onBindViewHolder(viewHolder: WaypointViewHolder, position: Int) {
         viewHolder.bind(position != 0 && position != predictions.lastIndex,
                 position == predictions.lastIndex,
-                predictions[position])
+                predictions[position]?.getFullText(null))
     }
 
     fun addItem() {

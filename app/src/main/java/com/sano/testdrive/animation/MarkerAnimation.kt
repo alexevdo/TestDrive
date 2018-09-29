@@ -13,10 +13,9 @@ import com.sano.testdrive.util.middlePoint
 class MarkerAnimation {
 
     val speed = 10000 //meters per second
+    val handler = Handler()
 
     fun animateMarker(marker: Marker, points: List<LatLng>) {
-        val handler = Handler()
-
         val start = SystemClock.uptimeMillis()
         var lastUpdate = start
         var lastPointIndex = 0
@@ -38,7 +37,6 @@ class MarkerAnimation {
 
         val runnable = object : Runnable {
             override fun run() {
-                // Calculate progress using interpolator
                 val currentTime = SystemClock.uptimeMillis()
                 val elapsed = currentTime - lastUpdate
                 lastUpdate = currentTime
@@ -66,7 +64,6 @@ class MarkerAnimation {
 
                 val fraction = distanceMeters / pointInfo[currentPointIndex][0]
 
-
                 lastPointIndex = currentPointIndex
                 marker.position = middlePoint(fraction, points[lastPointIndex], points[lastPointIndex + 1])
                 marker.rotation = pointInfo[lastPointIndex][1]
@@ -76,5 +73,9 @@ class MarkerAnimation {
         }
 
         handler.post(runnable)
+    }
+
+    fun stopAnimation() {
+        handler.removeCallbacksAndMessages(null)
     }
 }
