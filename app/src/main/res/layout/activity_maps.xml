@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <AutoCompleteTextView
+                android:id="@+id/et_start_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/map"
+                android:hint="Стартовая точка" />
+
+            <AutoCompleteTextView
+                android:id="@+id/et_second_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Вторая точка"
+                app:layout_constraintTop_toBottomOf="@id/et_start_point" />
+
+            <AutoCompleteTextView
+                android:id="@+id/et_third_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Третья точка"
+                app:layout_constraintTop_toBottomOf="@id/et_second_point" />
+
+            <AutoCompleteTextView
+                android:id="@+id/et_fourth_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Четвертая точка"
+                app:layout_constraintTop_toBottomOf="@id/et_third_point" />
+
+            <AutoCompleteTextView
+                android:id="@+id/et_end_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Конечная точка"
+                app:layout_constraintTop_toBottomOf="@id/et_fourth_point" />
+
+            <Button
+                android:id="@+id/btn_add_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Добавить промежуточную точку"
+                app:layout_constraintTop_toBottomOf="@id/et_end_point" />
+
+            <Button
+                android:id="@+id/btn_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Старт"
+                app:layout_constraintTop_toBottomOf="@id/btn_add_point" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+</LinearLayout>
