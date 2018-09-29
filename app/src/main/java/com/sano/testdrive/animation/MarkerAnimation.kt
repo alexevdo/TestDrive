@@ -8,9 +8,9 @@ import android.os.Handler
 import android.os.SystemClock
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.sano.testdrive.middlePoint
+import com.sano.testdrive.util.middlePoint
 
-object MarkerAnimation {
+class MarkerAnimation {
 
     val speed = 10000 //meters per second
 
@@ -20,7 +20,7 @@ object MarkerAnimation {
         val start = SystemClock.uptimeMillis()
         var lastUpdate = start
         var lastPointIndex = 0
-        var subdistance = 0f
+        var subDistance = 0f
 
         val pointInfo : ArrayList<FloatArray> = arrayListOf()
         points.forEachIndexed { index, latLng ->
@@ -52,15 +52,15 @@ object MarkerAnimation {
                         return
                     }
 
-                    val diff = pointInfo[currentPointIndex][0] - distanceMeters - subdistance
+                    val diff = pointInfo[currentPointIndex][0] - distanceMeters - subDistance
 
                     if(diff > 0) {
-                        subdistance += distanceMeters
+                        subDistance += distanceMeters
                         break
                     } else {
-                        distanceMeters -= pointInfo[currentPointIndex][0] - subdistance
+                        distanceMeters -= pointInfo[currentPointIndex][0] - subDistance
                         currentPointIndex++
-                        subdistance = 0f
+                        subDistance = 0f
                     }
                 }
 

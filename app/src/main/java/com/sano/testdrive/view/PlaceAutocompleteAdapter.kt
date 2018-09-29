@@ -1,4 +1,4 @@
-package com.sano.testdrive
+package com.sano.testdrive.view
 
 /*
  * Copyright (C) 2015 Google Inc. All Rights Reserved.

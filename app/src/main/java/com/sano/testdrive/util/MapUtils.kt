@@ -1,4 +1,4 @@
-package com.sano.testdrive
+package com.sano.testdrive.util
 
 import com.google.android.gms.maps.model.LatLng
 
