@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">TestDrive</string>
     <string name="title_activity_maps">Map</string>
+
+    <string-array name="waypoint_hints">
+        <item>Стартовая точка</item>
+        <item>Вторая точка</item>
+        <item>Третья точка</item>
+        <item>Четвертая точка</item>
+        <item>Конечная точка</item>
+    </string-array>
 </resources>

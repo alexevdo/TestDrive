@@ -21,47 +21,53 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <AutoCompleteTextView
-                android:id="@+id/et_start_point"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <android.support.v7.widget.RecyclerView
                 app:layout_constraintTop_toBottomOf="@id/map_view"
-                android:hint="Стартовая точка" />
-
-            <AutoCompleteTextView
-                android:id="@+id/et_second_point"
+                android:id="@+id/rv_waypoint"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Вторая точка"
-                app:layout_constraintTop_toBottomOf="@id/et_start_point" />
+                android:layout_height="wrap_content"/>
 
-            <AutoCompleteTextView
-                android:id="@+id/et_third_point"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Третья точка"
-                app:layout_constraintTop_toBottomOf="@id/et_second_point" />
+            <!--<AutoCompleteTextView-->
+                <!--android:id="@+id/et_start_point"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:layout_constraintTop_toBottomOf="@id/map_view"-->
+                <!--android:hint="Стартовая точка" />-->
 
-            <AutoCompleteTextView
-                android:id="@+id/et_fourth_point"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Четвертая точка"
-                app:layout_constraintTop_toBottomOf="@id/et_third_point" />
+            <!--<AutoCompleteTextView-->
+                <!--android:id="@+id/et_second_point"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="Вторая точка"-->
+                <!--app:layout_constraintTop_toBottomOf="@id/et_start_point" />-->
 
-            <AutoCompleteTextView
-                android:id="@+id/et_end_point"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Конечная точка"
-                app:layout_constraintTop_toBottomOf="@id/et_fourth_point" />
+            <!--<AutoCompleteTextView-->
+                <!--android:id="@+id/et_third_point"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="Третья точка"-->
+                <!--app:layout_constraintTop_toBottomOf="@id/et_second_point" />-->
+
+            <!--<AutoCompleteTextView-->
+                <!--android:id="@+id/et_fourth_point"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="Четвертая точка"-->
+                <!--app:layout_constraintTop_toBottomOf="@id/et_third_point" />-->
+
+            <!--<AutoCompleteTextView-->
+                <!--android:id="@+id/et_end_point"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="Конечная точка"-->
+                <!--app:layout_constraintTop_toBottomOf="@id/et_fourth_point" />-->
 
             <Button
                 android:id="@+id/btn_add_point"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Добавить промежуточную точку"
-                app:layout_constraintTop_toBottomOf="@id/et_end_point" />
+                app:layout_constraintTop_toBottomOf="@id/rv_waypoint" />
 
             <Button
                 android:id="@+id/btn_start"
