@@ -23,6 +23,6 @@ fun AutocompletePrediction.toSimplePrediction(): SimplePrediction? {
     val placeId = placeId
 
     return if (!fullText.isNullOrEmpty() && placeId != null) {
-        SimplePrediction(fullText, placeId)
+        SimplePrediction(fullText.toString(), placeId)
     } else null
 }

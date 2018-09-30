@@ -1,4 +1,4 @@
-package com.sano.testdrive.view
+package com.sano.testdrive.main
 
 import android.content.Context
 import android.util.AttributeSet

@@ -34,4 +34,9 @@ abstract class BaseMapFragment: Fragment(), OnMapReadyCallback {
         super.onLowMemory()
         map_view.onLowMemory()
     }
+
+    inline fun <reified T> Bundle?.getOrNull(key: String): T? {
+        this?.get(key)?.let { return it as T }
+                ?: return null
+    }
 }

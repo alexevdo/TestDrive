@@ -4,4 +4,6 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class SimplePrediction (val text: CharSequence, val placeId: String): Parcelable
+class SimplePrediction(
+        val text: String,
+        val placeId: String) : Parcelable

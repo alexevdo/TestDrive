@@ -1,4 +1,4 @@
-package com.sano.testdrive.view
+package com.sano.testdrive.main
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import com.sano.testdrive.model.SimplePrediction
 const val MAX_COUNT = 5
 
 class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAdapter,
-                       private val listener: ((ArrayList<SimplePrediction?>) -> Unit)): RecyclerView.Adapter<WaypointViewHolder>() {
+                       private val listener: ((List<SimplePrediction>) -> Unit)): RecyclerView.Adapter<WaypointViewHolder>() {
 
     private val predictions: ArrayList<SimplePrediction?> = ArrayList(5)
 
@@ -24,11 +24,11 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
         return WaypointViewHolder(view, placeAutocompleteAdapter,
                 { i: Int, s: SimplePrediction? ->
                     predictions[i] = s
-                    listener.invoke(predictions)
+                    listener.invoke(predictions.filterNotNull())
                 },
-                {i: Int ->
+                { i: Int ->
                     predictions.removeAt(i)
-                    listener.invoke(predictions)
+                    listener.invoke(predictions.filterNotNull())
                     notifyDataSetChanged()
                 })
     }
@@ -49,7 +49,14 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
         notifyDataSetChanged()
     }
 
-    fun getPlaceIds(): List<SimplePrediction?> {
-        return predictions.toList()
+    fun getPlaceIds(): List<SimplePrediction> {
+        return predictions.filterNotNull()
+    }
+
+    fun setItems(list: ArrayList<SimplePrediction>) {
+        predictions.clear()
+        predictions.addAll(list)
+        notifyDataSetChanged()
+        listener.invoke(predictions.filterNotNull())
     }
 }

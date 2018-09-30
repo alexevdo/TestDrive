@@ -14,6 +14,7 @@ class MarkerAnimation {
 
     val speed = 10000 //meters per second
     val handler = Handler()
+    private var onCompleteListener: ((Unit) -> Unit)? = null
 
     fun animateMarker(marker: Marker, points: List<LatLng>) {
         val start = SystemClock.uptimeMillis()
@@ -22,7 +23,7 @@ class MarkerAnimation {
         var subDistance = 0f
 
         val pointInfo : ArrayList<FloatArray> = arrayListOf()
-        points.forEachIndexed { index, latLng ->
+        points.forEachIndexed { index, _ ->
             if(index == points.lastIndex) return@forEachIndexed
 
             val array = FloatArray(2)
@@ -47,6 +48,7 @@ class MarkerAnimation {
                 while (true) {
                     if (currentPointIndex == points.lastIndex) {
                         marker.position = points.last()
+                        onCompleteListener?.invoke(Unit)
                         return
                     }
 
@@ -77,5 +79,9 @@ class MarkerAnimation {
 
     fun stopAnimation() {
         handler.removeCallbacksAndMessages(null)
+    }
+
+    fun setOnCompleteListener(listener: ((Unit) -> Unit) ) {
+        onCompleteListener = listener
     }
 }

@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.sano.testdrive.view.CustomMapView
+            <com.sano.testdrive.main.CustomMapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"

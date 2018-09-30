@@ -1,12 +1,10 @@
-package com.sano.testdrive
+package com.sano.testdrive.main
 
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.directions.route.*
 import com.example.latlnginterpolation.MarkerAnimation
 import com.google.android.gms.common.data.DataBufferUtils
@@ -14,12 +12,17 @@ import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
+import com.sano.testdrive.BaseMapFragment
+import com.sano.testdrive.DriveApplication
+import com.sano.testdrive.R
+import com.sano.testdrive.Router
 import com.sano.testdrive.model.FinishedRoute
+import com.sano.testdrive.model.SimplePrediction
 import com.sano.testdrive.util.MARKER_COLORS
-import com.sano.testdrive.view.PlaceAutocompleteAdapter
-import com.sano.testdrive.view.WaypointsAdapter
 import kotlinx.android.synthetic.main.fragment_maps.*
 import org.jetbrains.anko.support.v4.toast
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MapFragment : BaseMapFragment(), RoutingListener {
 
@@ -30,9 +33,9 @@ class MapFragment : BaseMapFragment(), RoutingListener {
             return MapFragment()
         }
 
-        fun newInstance(finishedRoute: FinishedRoute): MapFragment {
+        fun newInstance(simplePredictions: ArrayList<SimplePrediction>): MapFragment {
             val bundle = Bundle()
-                    .apply { putParcelable(FINISHED_ROUTE_EXTRA, finishedRoute) }
+                    .apply { putParcelableArrayList(FINISHED_ROUTE_EXTRA, simplePredictions) }
 
             val fargment = MapFragment()
             fargment.arguments = bundle
@@ -51,6 +54,8 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     private var markerCar: Marker? = null
     private var routingTask: AsyncTask<Void, Void, ArrayList<Route>>? = null
 
+    private lateinit var waypointsAdapter: WaypointsAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
@@ -59,7 +64,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
         super.onViewCreated(view, savedInstanceState)
 
         btn_start.setOnClickListener {
-            if(routePoints.isEmpty()) {
+            if (routePoints.isEmpty()) {
                 toast("Route is empty")
             } else {
                 markerCar?.remove()
@@ -74,6 +79,14 @@ class MapFragment : BaseMapFragment(), RoutingListener {
                         }
             }
         }
+
+        carAnimation.setOnCompleteListener {
+            toast("Route finished, stored in history")
+            val route = FinishedRoute(date = Calendar.getInstance().time, predictions = waypointsAdapter.getPlaceIds())
+            (requireContext().applicationContext as DriveApplication).getDriveDao().insertFinishedRoute(route)
+        }
+
+        setHasOptionsMenu(true)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -81,26 +94,25 @@ class MapFragment : BaseMapFragment(), RoutingListener {
 
         val mGeoDataClient = Places.getGeoDataClient(requireContext())
         val placeAdapter = PlaceAutocompleteAdapter(requireContext(), mGeoDataClient, null, null)
-        val waypointsAdapter = WaypointsAdapter(placeAdapter) { predicitons ->
-            val filteredPlaceIds: List<String> =
-                    predicitons
-                            .asSequence()
-                            .filter { it != null }
-                            .map { it!!.placeId }
-                            .toList()
+        waypointsAdapter = WaypointsAdapter(placeAdapter) { predicitons ->
+            clearMap()
 
-            val task = mGeoDataClient.getPlaceById(*filteredPlaceIds.toTypedArray())
-            task.addOnCompleteListener {
-                val list = DataBufferUtils.freezeAndClose(it.result)
+            if (predicitons.isEmpty()) return@WaypointsAdapter
 
-                clearMap()
+            val filteredPlaceIds: List<String> = predicitons.map { it.placeId }
 
-                list.forEachIndexed { index, place ->
-                    markerPoints.add(addPoint(place.latLng, index))
-                }
+            mGeoDataClient
+                    .getPlaceById(*filteredPlaceIds.toTypedArray())
+                    .addOnCompleteListener {
+                        val list = DataBufferUtils.freezeAndClose(it.result)
 
-                updateRouting()
-            }
+                        list.forEachIndexed { index, place ->
+                            markerPoints.add(addPoint(place.latLng, index))
+                        }
+
+                        moveCamera()
+                        updateRouting()
+                    }
         }
 
         rv_waypoint.adapter = waypointsAdapter
@@ -110,6 +122,35 @@ class MapFragment : BaseMapFragment(), RoutingListener {
             waypointsAdapter.addItem()
             view?.requestFocus()
         }
+
+        val list: ArrayList<SimplePrediction>? = arguments.getOrNull(FINISHED_ROUTE_EXTRA)
+        list?.let { waypointsAdapter.setItems(it) }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.action_history) {
+            (requireActivity() as Router).openHistoryFragment()
+            return true
+        }
+
+        return true
+    }
+
+    private fun moveCamera() {
+        val builder = LatLngBounds.Builder()
+        for (marker in markerPoints) {
+            builder.include(marker.position)
+        }
+        val bounds = builder.build()
+
+        val padding = 150
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+        map.animateCamera(cameraUpdate)
     }
 
     private fun clearMap() {
@@ -132,7 +173,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     }
 
     override fun onRoutingSuccess(route: ArrayList<Route>?, p1: Int) {
-        if(route == null || route.isEmpty()) {
+        if (route == null || route.isEmpty()) {
             toast("Routing fail: empty route")
             return
         }
@@ -157,8 +198,6 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     }
 
     private fun addPoint(latLng: LatLng, position: Int): Marker {
-        map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-
         return map.addMarker(
                 MarkerOptions()
                         .position(latLng)

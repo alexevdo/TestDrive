@@ -1,4 +1,4 @@
-package com.sano.testdrive.view
+package com.sano.testdrive.main
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -22,7 +22,7 @@ class WaypointViewHolder(itemView: View,
         closeImageView.setOnClickListener { onItemRemoveListener?.invoke(adapterPosition) }
 
         autoCompleteTextView.setAdapter(autocompleteAdapter)
-        autoCompleteTextView.setOnItemClickListener { parent, view, position, _ ->
+        autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
             val clickedPrediction = (parent.getItemAtPosition(position) as AutocompletePrediction)
             onItemSelectListener?.invoke(adapterPosition, clickedPrediction.toSimplePrediction())
         }
