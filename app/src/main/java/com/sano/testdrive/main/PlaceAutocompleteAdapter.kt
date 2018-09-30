@@ -118,7 +118,7 @@ class PlaceAutocompleteAdapter
 
                 // We need a separate list to store the results, since
                 // this is run asynchronously.
-                var filterData: ArrayList<AutocompletePrediction>? = ArrayList<AutocompletePrediction>()
+                var filterData: ArrayList<AutocompletePrediction>? = ArrayList()
 
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
@@ -140,7 +140,7 @@ class PlaceAutocompleteAdapter
 
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
-                    mResultList = results.values as ArrayList<AutocompletePrediction>
+                    mResultList = results.values as ArrayList<AutocompletePrediction>?
                     notifyDataSetChanged()
                 } else {
                     // The API did not return any results, invalidate the data set.

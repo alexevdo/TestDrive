@@ -51,9 +51,7 @@ class MainPresenter(private val view: MainView,
                     view.moveCamera()
                     view.stopAnimation()
 
-                    if (markerPoints.size < 2) {
-                        return@addOnCompleteListener
-                    }
+                    if (markerPoints.size < 2) return@addOnCompleteListener
 
                     routingTask = Routing.Builder()
                             .key(mapKey)

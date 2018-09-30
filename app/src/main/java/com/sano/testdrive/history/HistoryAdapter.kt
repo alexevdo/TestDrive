@@ -8,7 +8,7 @@ import com.sano.testdrive.model.FinishedRoute
 import com.sano.testdrive.model.SimplePrediction
 
 class HistoryAdapter(private val finishedRoutes: List<FinishedRoute>,
-                     private val listener: ((List<SimplePrediction>) -> Unit)): RecyclerView.Adapter<HistoryViewHolder>() {
+                     private val listener: ((List<SimplePrediction>) -> Unit)) : RecyclerView.Adapter<HistoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)

@@ -22,9 +22,9 @@ class MarkerAnimation {
         var lastPointIndex = 0
         var subDistance = 0f
 
-        val pointInfo : ArrayList<FloatArray> = arrayListOf()
+        val pointInfo: ArrayList<FloatArray> = arrayListOf()
         points.forEachIndexed { index, _ ->
-            if(index == points.lastIndex) return@forEachIndexed
+            if (index == points.lastIndex) return@forEachIndexed
 
             val array = FloatArray(2)
             Location.distanceBetween(points[index].latitude,
@@ -54,7 +54,7 @@ class MarkerAnimation {
 
                     val diff = pointInfo[currentPointIndex][0] - distanceMeters - subDistance
 
-                    if(diff > 0) {
+                    if (diff > 0) {
                         subDistance += distanceMeters
                         break
                     } else {
@@ -81,7 +81,7 @@ class MarkerAnimation {
         handler.removeCallbacksAndMessages(null)
     }
 
-    fun setOnCompleteListener(listener: ((Unit) -> Unit) ) {
+    fun setOnCompleteListener(listener: ((Unit) -> Unit)) {
         onCompleteListener = listener
     }
 }

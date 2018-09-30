@@ -14,8 +14,8 @@ class FinishedRoute(
         @ColumnInfo(name = "id")
         val id: Long = 0,
 
-        @ColumnInfo(name= "date")
+        @ColumnInfo(name = "date")
         val date: Date,
 
         @ColumnInfo(name = "predictions")
-        val predictions: List<SimplePrediction>): Parcelable
+        val predictions: List<SimplePrediction>) : Parcelable

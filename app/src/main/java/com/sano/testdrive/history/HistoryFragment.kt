@@ -11,7 +11,7 @@ import com.sano.testdrive.R
 import com.sano.testdrive.Router
 import kotlinx.android.synthetic.main.fragment_history.*
 
-class HistoryFragment: Fragment() {
+class HistoryFragment : Fragment() {
 
     companion object {
         fun newInstance() = HistoryFragment()

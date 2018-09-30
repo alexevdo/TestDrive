@@ -18,7 +18,7 @@ class WaypointViewHolder(itemView: View,
     private val closeImageView: ImageView = itemView.findViewById(R.id.iv_close)
 
     fun bind(isClosable: Boolean, prediction: CharSequence?) {
-        closeImageView.visibility = if(isClosable) View.VISIBLE else View.GONE
+        closeImageView.visibility = if (isClosable) View.VISIBLE else View.GONE
         closeImageView.setOnClickListener { onItemRemoveListener?.invoke(adapterPosition) }
 
         autoCompleteTextView.setAdapter(autocompleteAdapter)

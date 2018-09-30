@@ -68,14 +68,18 @@ class MainFragment : BaseMapFragment(), MainView {
         setHasOptionsMenu(true)
 
         setupWaypointsRecyclerView(geoDataClient)
+
+        btn_add_point.setOnClickListener { waypointsAdapter.addItem() }
+
+        arguments
+                .getOrNull<ArrayList<SimplePrediction>>(FINISHED_ROUTE_EXTRA)
+                ?.let { waypointsAdapter.setItems(it) }
     }
 
     private fun setupWaypointsRecyclerView(geoDataClient: GeoDataClient) {
         val placeAdapter = PlaceAutocompleteAdapter(requireContext(), geoDataClient, null, null)
 
-        waypointsAdapter = WaypointsAdapter(placeAdapter) { predictions ->
-            presenter.userPredictionsUpdate(predictions)
-        }
+        waypointsAdapter = WaypointsAdapter(placeAdapter) { presenter.userPredictionsUpdate(it) }
 
         rv_waypoint.adapter = waypointsAdapter
         rv_waypoint.layoutManager = LinearLayoutManager(requireContext())
@@ -83,13 +87,6 @@ class MainFragment : BaseMapFragment(), MainView {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
-        btn_add_point.setOnClickListener {
-            waypointsAdapter.addItem()
-        }
-
-        val list: ArrayList<SimplePrediction>? = arguments.getOrNull(FINISHED_ROUTE_EXTRA)
-        list?.let { waypointsAdapter.setItems(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -98,11 +95,7 @@ class MainFragment : BaseMapFragment(), MainView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_history) {
-            (requireActivity() as Router).openHistoryFragment()
-            return true
-        }
-
+        if (item.itemId == R.id.action_history) (requireActivity() as Router).openHistoryFragment()
         return true
     }
 
@@ -145,7 +138,9 @@ class MainFragment : BaseMapFragment(), MainView {
         markerCar?.apply { remove() }
     }
 
-    override fun showToast(text: String) { toast(text) }
+    override fun showToast(text: String) {
+        toast(text)
+    }
 
     override fun addMarkerCar(position: LatLng) {
         markerCar?.remove()

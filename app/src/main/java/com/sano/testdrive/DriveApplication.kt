@@ -4,7 +4,7 @@ import android.app.Application
 import android.arch.persistence.room.Room
 import com.sano.testdrive.database.DriveDatabase
 
-class DriveApplication: Application() {
+class DriveApplication : Application() {
 
     private lateinit var database: DriveDatabase
 

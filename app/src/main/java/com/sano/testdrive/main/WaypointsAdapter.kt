@@ -9,7 +9,7 @@ import com.sano.testdrive.model.SimplePrediction
 const val MAX_COUNT = 5
 
 class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAdapter,
-                       private val listener: ((List<SimplePrediction>) -> Unit)): RecyclerView.Adapter<WaypointViewHolder>() {
+                       private val listener: ((List<SimplePrediction>) -> Unit)) : RecyclerView.Adapter<WaypointViewHolder>() {
 
     private val predictions: ArrayList<SimplePrediction?> = ArrayList(5)
 
@@ -43,7 +43,7 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
     }
 
     fun addItem() {
-        if(predictions.size >= MAX_COUNT) return
+        if (predictions.size >= MAX_COUNT) return
         predictions.add(null)
         notifyDataSetChanged()
     }

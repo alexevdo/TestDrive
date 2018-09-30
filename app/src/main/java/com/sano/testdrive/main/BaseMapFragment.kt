@@ -6,7 +6,7 @@ import android.view.View
 import com.google.android.gms.maps.OnMapReadyCallback
 import kotlinx.android.synthetic.main.fragment_main.*
 
-abstract class BaseMapFragment: Fragment(), OnMapReadyCallback {
+abstract class BaseMapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +36,6 @@ abstract class BaseMapFragment: Fragment(), OnMapReadyCallback {
     }
 
     inline fun <reified T> Bundle?.getOrNull(key: String): T? {
-        this?.get(key)?.let { return it as T }
-                ?: return null
+        this?.get(key)?.let { return it as T } ?: return null
     }
 }

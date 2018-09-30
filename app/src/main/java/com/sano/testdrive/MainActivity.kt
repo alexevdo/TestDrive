@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), Router {
     }
 
     override fun onBackPressed() {
-        if(supportFragmentManager.findFragmentById(R.id.container) is HistoryFragment) openMainFragment(null)
+        if (supportFragmentManager.findFragmentById(R.id.container) is HistoryFragment) openMainFragment(null)
         else super.onBackPressed()
     }
 }
