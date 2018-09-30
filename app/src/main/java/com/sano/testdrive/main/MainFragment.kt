@@ -12,7 +12,6 @@ import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import com.sano.testdrive.BaseMapFragment
 import com.sano.testdrive.DriveApplication
 import com.sano.testdrive.R
 import com.sano.testdrive.Router
@@ -24,20 +23,20 @@ import org.jetbrains.anko.support.v4.toast
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MapFragment : BaseMapFragment(), RoutingListener {
+class MainFragment : BaseMapFragment(), RoutingListener {
 
     companion object {
         private const val FINISHED_ROUTE_EXTRA = "FINISHED_ROUTE_EXTRA"
 
-        fun newInstance(): MapFragment {
-            return MapFragment()
+        fun newInstance(): MainFragment {
+            return MainFragment()
         }
 
-        fun newInstance(simplePredictions: ArrayList<SimplePrediction>): MapFragment {
+        fun newInstance(simplePredictions: ArrayList<SimplePrediction>): MainFragment {
             val bundle = Bundle()
                     .apply { putParcelableArrayList(FINISHED_ROUTE_EXTRA, simplePredictions) }
 
-            val fargment = MapFragment()
+            val fargment = MainFragment()
             fargment.arguments = bundle
 
             return fargment

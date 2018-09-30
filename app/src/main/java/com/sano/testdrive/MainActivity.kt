@@ -3,7 +3,7 @@ package com.sano.testdrive
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.sano.testdrive.history.HistoryFragment
-import com.sano.testdrive.main.MapFragment
+import com.sano.testdrive.main.MainFragment
 import com.sano.testdrive.model.SimplePrediction
 
 class MainActivity : AppCompatActivity(), Router {
@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity(), Router {
 
     override fun openMainFragment(simplePredictions: ArrayList<SimplePrediction>?) {
         val fragment =
-                if (simplePredictions == null) MapFragment.newInstance()
-                else MapFragment.newInstance(simplePredictions)
+                if (simplePredictions == null) MainFragment.newInstance()
+                else MainFragment.newInstance(simplePredictions)
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)

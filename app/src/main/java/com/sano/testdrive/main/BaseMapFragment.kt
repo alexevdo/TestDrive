@@ -1,4 +1,4 @@
-package com.sano.testdrive
+package com.sano.testdrive.main
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
