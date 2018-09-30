@@ -6,10 +6,12 @@ import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import com.google.android.gms.location.places.AutocompletePrediction
 import com.sano.testdrive.R
+import com.sano.testdrive.model.SimplePrediction
+import com.sano.testdrive.util.toSimplePrediction
 
 class WaypointViewHolder(itemView: View,
                          private val autocompleteAdapter: PlaceAutocompleteAdapter,
-                         private val onItemSelectListener: ((Int, AutocompletePrediction) -> Unit)?,
+                         private val onItemSelectListener: ((Int, SimplePrediction?) -> Unit)?,
                          private val onItemRemoveListener: ((Int) -> Unit)?) : RecyclerView.ViewHolder(itemView) {
 
     private val autoCompleteTextView: AutoCompleteTextView = itemView.findViewById(R.id.ac_waypoint)
@@ -22,7 +24,7 @@ class WaypointViewHolder(itemView: View,
         autoCompleteTextView.setAdapter(autocompleteAdapter)
         autoCompleteTextView.setOnItemClickListener { parent, view, position, _ ->
             val clickedPrediction = (parent.getItemAtPosition(position) as AutocompletePrediction)
-            onItemSelectListener?.invoke(adapterPosition, clickedPrediction)
+            onItemSelectListener?.invoke(adapterPosition, clickedPrediction.toSimplePrediction())
         }
 
         autoCompleteTextView.setText(prediction)

@@ -3,15 +3,15 @@ package com.sano.testdrive.view
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.android.gms.location.places.AutocompletePrediction
 import com.sano.testdrive.R
+import com.sano.testdrive.model.SimplePrediction
 
 const val MAX_COUNT = 5
 
 class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAdapter,
-                       private val listener: ((ArrayList<AutocompletePrediction?>) -> Unit)): RecyclerView.Adapter<WaypointViewHolder>() {
+                       private val listener: ((ArrayList<SimplePrediction?>) -> Unit)): RecyclerView.Adapter<WaypointViewHolder>() {
 
-    private val predictions: ArrayList<AutocompletePrediction?> = ArrayList(2)
+    private val predictions: ArrayList<SimplePrediction?> = ArrayList(5)
 
     init {
         predictions.add(null)
@@ -22,7 +22,7 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
         val inflater = LayoutInflater.from(viewGroup.context)
         val view = inflater.inflate(R.layout.list_item_waypoint, viewGroup, false)
         return WaypointViewHolder(view, placeAutocompleteAdapter,
-                { i: Int, s: AutocompletePrediction ->
+                { i: Int, s: SimplePrediction? ->
                     predictions[i] = s
                     listener.invoke(predictions)
                 },
@@ -40,7 +40,7 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
     override fun onBindViewHolder(viewHolder: WaypointViewHolder, position: Int) {
         viewHolder.bind(position != 0 && position != predictions.lastIndex,
                 position == predictions.lastIndex,
-                predictions[position]?.getFullText(null))
+                predictions[position]?.text)
     }
 
     fun addItem() {
@@ -49,7 +49,7 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
         notifyDataSetChanged()
     }
 
-    fun getPlaceIds(): List<AutocompletePrediction?> {
+    fun getPlaceIds(): List<SimplePrediction?> {
         return predictions.toList()
     }
 }

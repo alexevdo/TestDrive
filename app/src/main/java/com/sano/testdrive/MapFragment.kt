@@ -32,9 +32,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
 
         fun newInstance(finishedRoute: FinishedRoute): MapFragment {
             val bundle = Bundle()
-                    .apply {
-                        putParcelable(FINISHED_ROUTE_EXTRA, finishedRoute)
-                    }
+                    .apply { putParcelable(FINISHED_ROUTE_EXTRA, finishedRoute) }
 
             val fargment = MapFragment()
             fargment.arguments = bundle
@@ -44,7 +42,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     }
 
     private lateinit var map: GoogleMap
-    private val markerAnimation: MarkerAnimation = MarkerAnimation()
+    private val carAnimation: MarkerAnimation = MarkerAnimation()
 
     private val markerPoints: ArrayList<Marker> = arrayListOf()
     private val polylines: ArrayList<Polyline> = arrayListOf()
@@ -72,7 +70,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
                                 .anchor(0.5f, 0.5f))
                         .let {
                             markerCar = it
-                            markerAnimation.animateMarker(it, routePoints)
+                            carAnimation.animateMarker(it, routePoints)
                         }
             }
         }
@@ -87,50 +85,55 @@ class MapFragment : BaseMapFragment(), RoutingListener {
             val filteredPlaceIds: List<String> =
                     predicitons
                             .asSequence()
-                            .filter { it != null && it.placeId != null }
-                            .map { it!!.placeId!! }
+                            .filter { it != null }
+                            .map { it!!.placeId }
                             .toList()
 
             val task = mGeoDataClient.getPlaceById(*filteredPlaceIds.toTypedArray())
             task.addOnCompleteListener {
-                val result = it.result
-                val list = DataBufferUtils.freezeAndClose(result)
-                markerPoints.forEach { it.remove() }
-                polylines.forEach { it.remove() }
-                markerPoints.clear()
+                val list = DataBufferUtils.freezeAndClose(it.result)
+
+                clearMap()
+
                 list.forEachIndexed { index, place ->
                     markerPoints.add(addPoint(place.latLng, index))
-                    updateRouting()
                 }
+
+                updateRouting()
             }
         }
+
+        rv_waypoint.adapter = waypointsAdapter
+        rv_waypoint.layoutManager = LinearLayoutManager(requireContext())
 
         btn_add_point.setOnClickListener {
             waypointsAdapter.addItem()
             view?.requestFocus()
         }
+    }
 
-        rv_waypoint.adapter = waypointsAdapter
-        rv_waypoint.layoutManager = LinearLayoutManager(requireContext())
+    private fun clearMap() {
+        markerPoints.forEach { it.remove() }
+        markerPoints.clear()
+        polylines.forEach { it.remove() }
+        polylines.clear()
+        routePoints.clear()
     }
 
     override fun onRoutingCancelled() {
-        routePoints.clear()
+        toast("Routing canceled")
     }
 
     override fun onRoutingStart() {
     }
 
-    override fun onRoutingFailure(p0: RouteException?) {
-        routePoints.clear()
+    override fun onRoutingFailure(exception: RouteException?) {
+        toast("Routing fail: ${exception?.message}")
     }
 
     override fun onRoutingSuccess(route: ArrayList<Route>?, p1: Int) {
-        toast("Routing success, routes: ${route?.size}")
-
-        routePoints.clear()
-
         if(route == null || route.isEmpty()) {
+            toast("Routing fail: empty route")
             return
         }
 
@@ -166,7 +169,7 @@ class MapFragment : BaseMapFragment(), RoutingListener {
     private fun updateRouting() {
         stopAnimation()
 
-        if (getWaypoints().size < 2) {
+        if (markerPoints.size < 2) {
             return
         }
 
@@ -174,15 +177,13 @@ class MapFragment : BaseMapFragment(), RoutingListener {
                 .key(getString(R.string.google_maps_key))
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
-                .waypoints(getWaypoints())
+                .waypoints(markerPoints.map { it.position })
                 .build()
                 .execute()
     }
 
-    private fun getWaypoints(): List<LatLng> = markerPoints.map { it.position }
-
     private fun stopAnimation() {
-        markerAnimation.stopAnimation()
+        carAnimation.stopAnimation()
         markerCar?.apply { remove() }
     }
 }

@@ -2,7 +2,6 @@ package com.sano.testdrive.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
-class FinishedRoute(val date: Date, val predictions: List<SimplePrediction>): Parcelable
+class SimplePrediction (val text: CharSequence, val placeId: String): Parcelable
