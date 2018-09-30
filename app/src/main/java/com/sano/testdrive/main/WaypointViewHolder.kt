@@ -17,7 +17,7 @@ class WaypointViewHolder(itemView: View,
     private val autoCompleteTextView: AutoCompleteTextView = itemView.findViewById(R.id.ac_waypoint)
     private val closeImageView: ImageView = itemView.findViewById(R.id.iv_close)
 
-    fun bind(isClosable: Boolean, isLast: Boolean, prediction: CharSequence?) {
+    fun bind(isClosable: Boolean, prediction: CharSequence?) {
         closeImageView.visibility = if(isClosable) View.VISIBLE else View.GONE
         closeImageView.setOnClickListener { onItemRemoveListener?.invoke(adapterPosition) }
 
@@ -29,10 +29,6 @@ class WaypointViewHolder(itemView: View,
 
         autoCompleteTextView.setText(prediction)
 
-        autoCompleteTextView.hint = if(isLast) {
-            itemView.resources.getStringArray(R.array.waypoint_hints).last()
-        } else {
-            itemView.resources.getStringArray(R.array.waypoint_hints)[adapterPosition]
-        }
+        autoCompleteTextView.hint = itemView.resources.getStringArray(R.array.waypoint_hints)[adapterPosition]
     }
 }

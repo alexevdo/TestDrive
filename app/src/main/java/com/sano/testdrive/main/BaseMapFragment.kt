@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
 import com.google.android.gms.maps.OnMapReadyCallback
-import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.android.synthetic.main.fragment_main.*
 
 abstract class BaseMapFragment: Fragment(), OnMapReadyCallback {
 

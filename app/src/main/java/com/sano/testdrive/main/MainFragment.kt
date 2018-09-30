@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import com.directions.route.*
 import com.example.latlnginterpolation.MarkerAnimation
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
@@ -16,7 +15,7 @@ import com.sano.testdrive.R
 import com.sano.testdrive.Router
 import com.sano.testdrive.model.SimplePrediction
 import com.sano.testdrive.util.MARKER_COLORS
-import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import org.jetbrains.anko.support.v4.toast
 
 class MainFragment : BaseMapFragment(), MainView {
@@ -49,7 +48,7 @@ class MainFragment : BaseMapFragment(), MainView {
     private lateinit var waypointsAdapter: WaypointsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

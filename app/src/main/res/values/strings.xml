@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TestDrive</string>
     <string name="title_activity_maps">Map</string>
+    <string name="add_point">Добавить промежуточную точку</string>
+    <string name="start">Старт</string>
 
     <string-array name="waypoint_hints">
         <item>Первая точка</item>

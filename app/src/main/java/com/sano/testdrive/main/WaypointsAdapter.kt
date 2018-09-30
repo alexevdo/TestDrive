@@ -39,13 +39,12 @@ class WaypointsAdapter(private val placeAutocompleteAdapter: PlaceAutocompleteAd
 
     override fun onBindViewHolder(viewHolder: WaypointViewHolder, position: Int) {
         viewHolder.bind(position > 1,
-                position == predictions.lastIndex,
                 predictions[position]?.text)
     }
 
     fun addItem() {
-        if(predictions.size == MAX_COUNT) return
-        predictions.add(predictions.lastIndex, null)
+        if(predictions.size >= MAX_COUNT) return
+        predictions.add(null)
         notifyDataSetChanged()
     }
 
