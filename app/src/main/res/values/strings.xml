@@ -3,10 +3,10 @@
     <string name="title_activity_maps">Map</string>
 
     <string-array name="waypoint_hints">
-        <item>Стартовая точка</item>
+        <item>Первая точка</item>
         <item>Вторая точка</item>
         <item>Третья точка</item>
         <item>Четвертая точка</item>
-        <item>Конечная точка</item>
+        <item>Пятая точка</item>
     </string-array>
 </resources>
