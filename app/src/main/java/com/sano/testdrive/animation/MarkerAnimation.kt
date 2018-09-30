@@ -6,6 +6,7 @@ package com.example.latlnginterpolation
 import android.location.Location
 import android.os.Handler
 import android.os.SystemClock
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.sano.testdrive.util.middlePoint
@@ -13,16 +14,18 @@ import com.sano.testdrive.util.middlePoint
 class MarkerAnimation {
 
     val speed = 10000 //meters per second
+    val step = 16L //ms 60fps
     val handler = Handler()
     private var onCompleteListener: ((Unit) -> Unit)? = null
 
     fun animateMarker(marker: Marker, points: List<LatLng>) {
         val start = SystemClock.uptimeMillis()
-        var lastUpdate = start
         var lastPointIndex = 0
         var subDistance = 0f
 
         val pointInfo: ArrayList<FloatArray> = arrayListOf()
+
+        var avgDistance = 0.0
         points.forEachIndexed { index, _ ->
             if (index == points.lastIndex) return@forEachIndexed
 
@@ -33,44 +36,61 @@ class MarkerAnimation {
                     points[index + 1].longitude,
                     array)
 
+            avgDistance += array[0]
             pointInfo.add(array)
         }
 
-        val runnable = object : Runnable {
-            override fun run() {
-                val currentTime = SystemClock.uptimeMillis()
-                val elapsed = currentTime - lastUpdate
-                lastUpdate = currentTime
-                var distanceMeters = speed * elapsed / 1000f
+        val metersPerStep = speed / 1000 * step
 
-                var currentPointIndex = lastPointIndex
+        val pointsList: ArrayList<LatLng> = arrayListOf()
+        val bearings: ArrayList<Float> = arrayListOf()
 
-                while (true) {
-                    if (currentPointIndex == points.lastIndex) {
-                        marker.position = points.last()
-                        onCompleteListener?.invoke(Unit)
-                        return
-                    }
+        var currentPointIndex = lastPointIndex
 
-                    val diff = pointInfo[currentPointIndex][0] - distanceMeters - subDistance
+        outer@ while(true) {
 
-                    if (diff > 0) {
-                        subDistance += distanceMeters
-                        break
-                    } else {
-                        distanceMeters -= pointInfo[currentPointIndex][0] - subDistance
-                        currentPointIndex++
-                        subDistance = 0f
-                    }
+            var distanceMeters: Float = metersPerStep.toFloat()
+
+            while (true) {
+                if (currentPointIndex == points.lastIndex) {
+                    pointsList.add(points.last())
+                    bearings.add(pointInfo.last()[1])
+                    break@outer
                 }
 
-                val fraction = distanceMeters / pointInfo[currentPointIndex][0]
+                val diff = pointInfo[currentPointIndex][0] - distanceMeters - subDistance
 
-                lastPointIndex = currentPointIndex
-                marker.position = middlePoint(fraction, points[lastPointIndex], points[lastPointIndex + 1])
-                marker.rotation = pointInfo[lastPointIndex][1]
+                if (diff > 0) {
+                    subDistance += distanceMeters
+                    break
+                } else {
+                    distanceMeters -= pointInfo[currentPointIndex][0] - subDistance
+                    currentPointIndex++
+                    subDistance = 0f
+                }
+            }
 
-                handler.postDelayed(this, 500)
+            val fraction = distanceMeters / pointInfo[currentPointIndex][0]
+
+            lastPointIndex = currentPointIndex
+            pointsList.add(middlePoint(fraction, points[lastPointIndex], points[lastPointIndex + 1]))
+            bearings.add(pointInfo[lastPointIndex][1])
+        }
+
+        var i = 0
+
+        val runnable = object : Runnable {
+            override fun run() {
+                if(pointsList.lastIndex == i) {
+                    onCompleteListener?.invoke(Unit)
+                    return
+                }
+                marker.position = pointsList[i]
+                marker.rotation = bearings[i]
+
+                i++
+
+                handler.postDelayed(this, step)
             }
         }
 
